@@ -1,6 +1,6 @@
 /*
 author  : 寒菱
-date    : 2020/8/11
+date    : 2020/10/22
 desc    : 
 */
 
@@ -10,23 +10,43 @@ const traverse = require("@babel/traverse").default;
 const t = require("@babel/types");
 const generator = require("@babel/generator").default;
 
-let jscode = "a = 1, 3, 5";
+let jscode =
+`
+b = (0,g.o)(a);
+
+c = (a=1,b=2,c=3,d=4,e=5,f);
+
+function get()
+{
+	return a=1,b=2,a +=2,a;
+}
+`;
 
 let ast = parse(jscode);
 
 const visitor =
     {
-        ExpressionStatement(path){
-            let {expression} = path.node;
-            if(!t.isSequenceExpression(expression)){
-                return;
+        SequenceExpression: {
+		    exit(path){
+                let expressions = path.get('expressions');
+                let last_expression = expressions.pop();
+                
+                let statement = path.getStatementParent();
+                
+                if(statement){
+                    for(let expression of expressions)
+                    {
+                        // 删除无用的干扰代码
+                        if(expression.isLiteral() ||expression.isIdentifier())
+                        {
+                            expression.remove();
+                            continue;
+                        }
+                        statement.insertBefore(types.ExpressionStatement(expression=expression.node));
+                    }
+				    path.replaceInline(last_expression);
+                }
             }
-            let tmp = [];
-            expression.expressions.forEach(express=>{
-                tmp.push(t.ExpressionStatement(express))
-            })
-
-            path.replaceInline(tmp)
         }
     }
 
@@ -37,3 +57,33 @@ const visitor =
 traverse(ast,visitor);
 let {code} = generator(ast);
 console.log(code);
+
+
+/*******************************************
+b = (0,g.o)(a);
+
+c = (a=1,b=2,c=3,d=4,e=5,f);
+
+function get()
+{
+	return a=1,b=2,a +=2,a;
+}
+
+===>
+
+b = g.o(a);
+a = 1;
+b = 2;
+c = 3;
+d = 4;
+e = 5;
+c = f;
+
+function get() {
+  a = 1;
+  b = 2;
+  a += 2;
+  return a;
+}
+
+******************************************/
