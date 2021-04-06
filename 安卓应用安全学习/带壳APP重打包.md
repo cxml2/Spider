@@ -9,16 +9,18 @@ com.hello.qqc on (google: 8.1.0) [usb] # plugin dexdump dump
 [DEXDump]: DexSize=0x3e818, DexMd5=a625062206deda288513b59797f67803, SavePath=/root/Desktop/0820/com.hello.qqc/0xe688701c.dex  
 ```
 
+```shell
+# 查找 MainActivity 所在的dex
+grep -ril "MainActivity" *
+```
 # hook
 找到需要 hook 的类或者方法, 慢慢找
 一般 去找 dialog 
 
 ```shell
-com.hello.qqc on (google: 8.1.0) [usb] # plugin wallbreaker objectsearch cn.net.tokyo.cc
-g.ui.fragment.dialog.UpdateDialogFragment
+com.hello.qqc on (google: 8.1.0) [usb] # plugin wallbreaker objectsearch cn.net.tokyo.ccg.ui.fragment.dialog.UpdateDialogFragment
 [0x309a]: UpdateDialogFragment{d416941 #1 UpdateDialogFragment}
-com.hello.qqc on (google: 8.1.0) [usb] # plugin wallbreaker objectdump  --fullname 0x309
-a
+com.hello.qqc on (google: 8.1.0) [usb] # plugin wallbreaker objectdump  --fullname 0x309a
 
 package cn.net.tokyo.ccg.ui.fragment.dialog
 
@@ -47,8 +49,7 @@ class UpdateDialogFragment {
         android.app.Dialog onCreateDialog(android.os.Bundle);
 
 }                                                                                       
-com.hello.qqc on (google: 8.1.0) [usb] # plugin wallbreaker objectdump  --fullname 0x30f
-6
+com.hello.qqc on (google: 8.1.0) [usb] # plugin wallbreaker objectdump  --fullname 0x30f6
 
 package cn.net.tokyo.ccg.bean
 
@@ -171,4 +172,6 @@ jarsigner  -verbose -keystore abc.keystore -signedjar 签名后.apk 原app.apk a
 
 安装查看
 
+
+[https://bbs.pediy.com/thread-259455.htm](https://bbs.pediy.com/thread-259455.htm)
 
