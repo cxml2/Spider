@@ -136,3 +136,4 @@ dmypy.json
 # js
 node_modules/
 package-lock.json
+/GlidedSky/config.py
