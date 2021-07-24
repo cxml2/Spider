@@ -7,7 +7,7 @@ desc    :
 const fs = require('fs');
 const {parse} = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
-const t = require("@babel/types");
+const types = require("@babel/types");
 const generator = require("@babel/generator").default;
 
 let jscode =
